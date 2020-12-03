@@ -1,14 +1,32 @@
 <div class="col-xs-12 col-sm-6">
-  <form>
+  <form (ngSubmit)="onSubmit()"  #form="ngForm" >
     <div class="form-group">
       <label for="exampleInputEmail1">First Name:</label>
-      <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+      <input
+        type="firstname"
+        class="form-control"
+        maxlength="20"
+        (keydown.space)="$event.preventDefault()"
+        name="first"
+        ngModel
+        required
+      />
     </div>
     <div class="form-group">
       <label for="exampleInputPassword1">Last Name:</label>
-      <input type="password" class="form-control" id="exampleInputPassword1">
+      <input
+        type="lastname"
+        class="form-control"
+        maxlength="20"
+        (keydown.space)="$event.preventDefault()"
+        name="last"
+        ngModel
+        required
+      />
     </div>
-    <button type="submit" class="btn btn-primary">Submit</button> 
-    <button type="button" class="btn btn-secondary">Cancel</button>
+    <button type="submit" class="btn btn-primary" [disabled]="!form.valid">
+      Submit
+    </button>
+    <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
   </form>
 </div>
