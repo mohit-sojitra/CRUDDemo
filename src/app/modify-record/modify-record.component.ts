@@ -17,33 +17,31 @@ export class ModifyRecordComponent implements OnInit {
   updateMode = false;
   updatingRecord: RecordModel;
   updatingRecordId: number;
-  constructor(private RecordMaintainService: RecordMaintainService, private route: ActivatedRoute,private router:Router) { }
+  constructor(private RecordMaintainService: RecordMaintainService, private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit(): void {
-    this.route.params
-      .subscribe(
-        (params: Params) => {
-          this.updatingRecordId = params.id;
-          this.updateMode = true;
-          this.updatingRecord = this.RecordMaintainService.records[this.updatingRecordId];
-          console.log(this.updatingRecord);
-        }
-      );
-    setTimeout(() => {
-      this.formData.setValue({
-        first: this.updatingRecord.firstName,
-        last: this.updatingRecord.lastName
-     });
-   }, );
+    if (this.route.snapshot.params.id && this.route.snapshot.params.id !== 'new') {
+      this.updatingRecordId = this.route.snapshot.params.id;
+      this.updatingRecord = this.RecordMaintainService.records[this.updatingRecordId];
+      console.log(this.updatingRecord);
+      this.updateMode = true;
+      setTimeout(() => {
+        this.formData.setValue({
+          first: this.updatingRecord.first_name,
+          last: this.updatingRecord.last_name
+        });
+      });
+    }
   }
 
   onSubmit() {
     this.firstName = this.formData.value.firstName;
     this.lastName = this.formData.value.lastName;
     if (!this.updateMode) {
-      this.RecordMaintainService.addRecord(this.firstName, this.lastName);
+      console.log('creating record');
+      this.RecordMaintainService.createRecord(this.firstName, this.lastName);
       this.router.navigate(['/recordlist']);
-    }else{
+    } else {
       this.RecordMaintainService.UpdateRecord(this.updatingRecordId,this.firstName, this.lastName);
       this.updateMode = false;
       this.router.navigate(['/recordlist']);

@@ -1,14 +1,25 @@
 <h1 class="display-4">USER CRUD APPLICATION</h1>
-<hr/>
+<hr />
 <div class="container">
   <div class="row">
     <div class="col-md">
       <ul class="nav nav-pills">
         <li class="nav-item">
-          <a class="nav-link"  [routerLink]="['/recordlist']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" >Record List</a>
+          <a
+            class="nav-link"
+            [routerLink]="['/recordlist']"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+            >Record List</a
+          >
         </li>
         <li class="nav-item">
-          <a class="nav-link"  [routerLink]="['/recordlist/new']" routerLinkActive="active" >Add Record</a>
+          <a
+            class="nav-link"
+            [routerLink]="['/recordlist/new']"
+            routerLinkActive="active"
+            >Add Record</a
+          >
         </li>
       </ul>
       <router-outlet></router-outlet>

@@ -1,12 +1,7 @@
-export class RecordModel {
-  // static numberofpage: number;
-  // firstName: string;
-  // lastName: string;
-  // profileUrl: string;
-
-  constructor(public id: string, public firstName: string, public lastName: string, public profileUrl: string) {
-    // this.firstName = firstName;
-    // this.lastName = lastName;
-    // this.profileUrl = profileUrl;
-  }
+export interface RecordModel {
+  avatar: string;
+  email: string;
+  first_name: string;
+  id: number;
+  last_name: string;
 }

@@ -11,26 +11,16 @@ export class RecordMaintainService {
   apiUrl = 'https://reqres.in/api/users/';
   public records: RecordModel[] = [];
   public configObservable = new Subject<number>();
-
   constructor(private http: HttpClient) { }
 
-  getRecord() {
-    this.records.length = 0;
-    this.http.get(
-      this.apiUrl
-    ).subscribe(responce => {
-      const obj = responce['data'];
-      this.configObservable.next(responce['total_pages']);
-      // tslint:disable-next-line: forin
-      for (const i in obj) {
-        this.records.push(new RecordModel(obj[i]['id'], obj[i]['first_name'], obj[i]['last_name'], obj[i]['avatar']));
-      }
-      console.log(this.records);
-    });
-  }
-
-  addRecord(firstName: string, lastName: string) {
-    const record = new RecordModel('', firstName, lastName, '');
+  createRecord(firstName: string, lastName: string) {
+    const record: RecordModel = {
+      id: null,
+      first_name: firstName,
+      last_name: lastName,
+      avatar: '',
+      email: ''
+    };
     this.http.post(
       this.apiUrl,
       record
@@ -39,35 +29,31 @@ export class RecordMaintainService {
     });
   }
 
-  updateTable(item: any) {
+  getRecord(pageNumber) {
     this.records.length = 0;
     this.http.get(
       this.apiUrl,
       {
         params: {
-          'page': item
+          page: pageNumber
         }
       }
     ).subscribe(responce => {
       const obj = responce['data'];
       this.configObservable.next(responce['total_pages']);
-      // tslint:disable-next-line: forin
-      for (const i in obj) {
-        this.records.push(new RecordModel(obj[i]['id'], obj[i]['first_name'], obj[i]['last_name'], obj[i]['avatar']));
-      }
+      this.records.push(...obj);
       console.log(this.records);
     });
   }
 
-  deleteRecord(index: any) {
-    this.http.delete(
-      this.apiUrl + index
-    ).subscribe(() => { console.log("Record deleted from server") });
-
-  }
-
   UpdateRecord(updatingRecordId: number, firstName: string, lastName: string) {
-    const record = new RecordModel('', firstName, lastName, '');
+    const record: RecordModel = {
+      first_name: firstName,
+      last_name: lastName,
+      avatar: '',
+      id: updatingRecordId,
+      email: ''
+    };
     this.http.put(
       this.apiUrl + updatingRecordId,
       record
@@ -76,5 +62,11 @@ export class RecordMaintainService {
     });
   }
 
+  deleteRecord(index: any) {
+    this.http.delete(
+      this.apiUrl + index
+    ).subscribe(() => { console.log('Record deleted from server') });
+
+  }
 
 }
