@@ -13,11 +13,11 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let item of records; let i = index">
-      <th class="th-sm">{{ item.first_name }}</th>
-      <th class="th-sm">{{ item.last_name }}</th>
+    <tr *ngFor="let record of records; let i = index">
+      <th class="th-sm">{{ record.first_name }}</th>
+      <th class="th-sm">{{ record.last_name }}</th>
       <th class="th-sm">
-        <img [src]="item.avatar" alt="Image not found" />
+        <img [src]="record.avatar" alt="Image not found" />
       </th>
       <th class="th-sm">
         <a  [routerLink]="['/recordlist/',i]">Edit | </a>

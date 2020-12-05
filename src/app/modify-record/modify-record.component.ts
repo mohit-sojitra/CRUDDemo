@@ -38,7 +38,6 @@ export class ModifyRecordComponent implements OnInit {
     this.firstName = this.formData.value.firstName;
     this.lastName = this.formData.value.lastName;
     if (!this.updateMode) {
-      console.log('creating record');
       this.RecordMaintainService.createRecord(this.firstName, this.lastName);
       this.router.navigate(['/recordlist']);
     } else {

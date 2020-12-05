@@ -10,10 +10,11 @@ import { Observable, Subject } from 'rxjs';
 export class RecordMaintainService {
   apiUrl = 'https://reqres.in/api/users/';
   public records: RecordModel[] = [];
-  public configObservable = new Subject<number>();
+  public totalPages = new Subject<number>();
   constructor(private http: HttpClient) { }
 
   createRecord(firstName: string, lastName: string) {
+    console.log('Creating Record');
     const record: RecordModel = {
       id: null,
       first_name: firstName,
@@ -30,6 +31,7 @@ export class RecordMaintainService {
   }
 
   getRecord(pageNumber) {
+    console.log('Get Record');
     this.records.length = 0;
     this.http.get(
       this.apiUrl,
@@ -40,13 +42,14 @@ export class RecordMaintainService {
       }
     ).subscribe(responce => {
       const obj = responce['data'];
-      this.configObservable.next(responce['total_pages']);
+      this.totalPages.next(responce['total_pages']);
       this.records.push(...obj);
       console.log(this.records);
     });
   }
 
   UpdateRecord(updatingRecordId: number, firstName: string, lastName: string) {
+    console.log('Updating Record');
     const record: RecordModel = {
       first_name: firstName,
       last_name: lastName,
@@ -63,9 +66,10 @@ export class RecordMaintainService {
   }
 
   deleteRecord(index: any) {
+    console.log('Deleting Record');
     this.http.delete(
       this.apiUrl + index
-    ).subscribe(() => { console.log('Record deleted from server') });
+    ).subscribe(() => { console.log('Record deleted from server'); });
 
   }
 
