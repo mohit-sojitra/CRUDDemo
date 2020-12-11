@@ -23,8 +23,11 @@ export class ModifyRecordComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.reloadSub = this.route.params.subscribe(routeParams => {
-      if (routeParams.id === 'new') this.ngOnInit;
+      this.loadUserDetail(routeParams.id);
     });
+  }
+
+  loadUserDetail(id: any) {
     if (this.route.snapshot.params.id && this.route.snapshot.params.id !== 'new') {
       this.updatingRecordId = this.route.snapshot.params.id;
       this.updatingRecord = this.RecordMaintainService.records[this.updatingRecordId];
@@ -37,9 +40,15 @@ export class ModifyRecordComponent implements OnInit, OnDestroy {
         });
       });
     }
+    else {
+      setTimeout(() => {
+        this.formData.resetForm();
+      });
+      this.updateMode = false;
+    }
   }
 
-  onSubmit(formD: NgForm) {
+  onSubmit() {
     this.firstName = this.formData.value.first_name;
     this.lastName = this.formData.value.last_name;
     if (!this.updateMode) {
@@ -63,6 +72,7 @@ export class ModifyRecordComponent implements OnInit, OnDestroy {
     this.formData.reset();
     this.router.navigate(['/recordlist']);
   }
+
   ngOnDestroy() {
     this.reloadSub.unsubscribe();
   }
