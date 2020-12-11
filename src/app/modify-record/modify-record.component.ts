@@ -1,7 +1,8 @@
+import { Subscription } from 'rxjs';
 import { RecordModel } from './../record.model';
 import { RecordMaintainService } from './../record-maintain.service';
 import { NgForm } from '@angular/forms';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 
 @Component({
@@ -9,17 +10,21 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
   templateUrl: './modify-record.component.html',
   styleUrls: ['./modify-record.component.css']
 })
-export class ModifyRecordComponent implements OnInit {
+export class ModifyRecordComponent implements OnInit, OnDestroy {
 
-  @ViewChild('form', { static: true }) formData: NgForm;
+  @ViewChild('form', { static: false }) formData: NgForm;
   firstName: string;
   lastName: string;
   updateMode = false;
   updatingRecord: RecordModel;
   updatingRecordId: number;
+  reloadSub: Subscription;
   constructor(private RecordMaintainService: RecordMaintainService, private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit(): void {
+    this.reloadSub = this.route.params.subscribe(routeParams => {
+      if (routeParams.id === 'new') this.ngOnInit;
+    });
     if (this.route.snapshot.params.id && this.route.snapshot.params.id !== 'new') {
       this.updatingRecordId = this.route.snapshot.params.id;
       this.updatingRecord = this.RecordMaintainService.records[this.updatingRecordId];
@@ -27,21 +32,27 @@ export class ModifyRecordComponent implements OnInit {
       this.updateMode = true;
       setTimeout(() => {
         this.formData.setValue({
-          first: this.updatingRecord.first_name,
-          last: this.updatingRecord.last_name
+          first_name: this.updatingRecord.first_name,
+          last_name: this.updatingRecord.last_name
         });
       });
     }
   }
 
-  onSubmit() {
-    this.firstName = this.formData.value.firstName;
-    this.lastName = this.formData.value.lastName;
+  onSubmit(formD: NgForm) {
+    this.firstName = this.formData.value.first_name;
+    this.lastName = this.formData.value.last_name;
     if (!this.updateMode) {
-      this.RecordMaintainService.createRecord(this.firstName, this.lastName);
+      this.RecordMaintainService.createRecord(this.firstName, this.lastName)
+        .subscribe(responce => {
+          console.log(responce);
+        });
       this.router.navigate(['/recordlist']);
     } else {
-      this.RecordMaintainService.UpdateRecord(this.updatingRecordId,this.firstName, this.lastName);
+      this.RecordMaintainService.UpdateRecord(this.updatingRecordId, this.firstName, this.lastName)
+        .subscribe(responce => {
+          console.log(responce);
+        });
       this.updateMode = false;
       this.router.navigate(['/recordlist']);
     }
@@ -51,5 +62,8 @@ export class ModifyRecordComponent implements OnInit {
     this.updateMode = false;
     this.formData.reset();
     this.router.navigate(['/recordlist']);
+  }
+  ngOnDestroy() {
+    this.reloadSub.unsubscribe();
   }
 }

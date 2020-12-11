@@ -8,28 +8,31 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./record-list.component.css']
 })
 export class RecordListComponent implements OnInit {
-  records: RecordModel[];
+  records: RecordModel[] = [];
   mySub: Subscription;
   numberofpages: number[];
   activatedPage = 1;
-  constructor(private RecordMaintainService: RecordMaintainService) {
-    RecordMaintainService.totalPages.subscribe(data => {
-      this.numberofpages = Array(data).fill(0).map((x, i) => i + 1);
-    });
-  }
+  constructor(private RecordMaintainService: RecordMaintainService) { }
   ngOnInit(): void {
     this.records = this.RecordMaintainService.records;
     this.getRecord(this.activatedPage);
   }
-  getRecord(item) {
-    this.activatedPage = item;
-    this.RecordMaintainService.getRecord(this.activatedPage);
+  getRecord(pagenumber: number) {
+    this.activatedPage = pagenumber;
+    this.RecordMaintainService.getRecord(this.activatedPage).subscribe(responce => {
+      this.records.length = 0;
+      const obj = responce['data'];
+      this.numberofpages = Array(responce['total_pages']).fill(0).map((x, i) => i + 1);
+      this.records.push(...obj);
+      console.log(this.records);
+    });;
   }
-  deleteRecord(i) {
+  deleteRecord(i: number) {
     if (confirm('Are you sure to delete ' + this.records[i].first_name)) {
-      this.RecordMaintainService.deleteRecord(this.records[i].id);
+      this.RecordMaintainService.deleteRecord(this.records[i].id).subscribe(() => {
+        console.log('Deleted');
+      });
       this.records.splice(i, 1);
     }
   }
-
 }

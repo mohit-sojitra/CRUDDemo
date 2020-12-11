@@ -20,7 +20,7 @@
         <img [src]="record.avatar" alt="Image not found" />
       </th>
       <th class="th-sm">
-        <a  [routerLink]="['/recordlist/',i]">Edit | </a>
+        <a [routerLink]="['/recordlist/', i]">Edit | </a>
         <a (click)="deleteRecord(i)" [routerLink]="['/recordlist']">Delete</a>
       </th>
     </tr>

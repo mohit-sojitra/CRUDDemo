@@ -1,7 +1,7 @@
 import { RecordModel } from './record.model';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, Subject } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -10,10 +10,9 @@ import { Observable, Subject } from 'rxjs';
 export class RecordMaintainService {
   apiUrl = 'https://reqres.in/api/users/';
   public records: RecordModel[] = [];
-  public totalPages = new Subject<number>();
   constructor(private http: HttpClient) { }
-
-  createRecord(firstName: string, lastName: string) {
+  
+  createRecord(firstName: string, lastName: string): Observable<string> {
     console.log('Creating Record');
     const record: RecordModel = {
       id: null,
@@ -22,33 +21,25 @@ export class RecordMaintainService {
       avatar: '',
       email: ''
     };
-    this.http.post(
+    return this.http.post<string>(
       this.apiUrl,
       record
-    ).subscribe(responce => {
-      console.log(responce);
-    });
+    )
   }
 
-  getRecord(pageNumber) {
-    console.log('Get Record');
-    this.records.length = 0;
-    this.http.get(
+  getRecord(pageNumber): Observable<any> {
+    console.log('Getting Records');
+    return this.http.get(
       this.apiUrl,
       {
         params: {
           page: pageNumber
         }
       }
-    ).subscribe(responce => {
-      const obj = responce['data'];
-      this.totalPages.next(responce['total_pages']);
-      this.records.push(...obj);
-      console.log(this.records);
-    });
+    )
   }
 
-  UpdateRecord(updatingRecordId: number, firstName: string, lastName: string) {
+  UpdateRecord(updatingRecordId: number, firstName: string, lastName: string): Observable<string> {
     console.log('Updating Record');
     const record: RecordModel = {
       first_name: firstName,
@@ -57,20 +48,17 @@ export class RecordMaintainService {
       id: updatingRecordId,
       email: ''
     };
-    this.http.put(
+    return this.http.put<string>(
       this.apiUrl + updatingRecordId,
       record
-    ).subscribe(responce => {
-      console.log(responce);
-    });
+    );
   }
 
-  deleteRecord(index: any) {
+  deleteRecord(index: any): Observable<void> {
     console.log('Deleting Record');
-    this.http.delete(
+    return this.http.delete<void>(
       this.apiUrl + index
-    ).subscribe(() => { console.log('Record deleted from server'); });
-
+    );
   }
 
 }
